@@ -52,13 +52,9 @@ void Asteroids::Start()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_light);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_light);
 	glEnable(GL_LIGHT0);
-	Animation* explosion_anim
-		= AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024,
-			64, 64, "explosion_fs.png");
-	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1",
-		128, 8192, 128, 128, "asteroid1_fs.png");
-	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship",
-		128, 128, 128, 128, "spaceship_fs.png");
+	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
+	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
+	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
@@ -181,8 +177,7 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 	shared_ptr<Shape> thruster_shape = make_shared<Shape>("thruster.shape");
 	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
 	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
-	shared_ptr<Sprite> spaceship_sprite =
-		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 	mSpaceship->SetSprite(spaceship_sprite);
 	mSpaceship->SetScale(0.1f);
 	mSpaceship->SetSpaceshipShape(spaceship_shape);
@@ -201,8 +196,7 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 	for (uint i = 0; i < num_asteroids; i++)
 	{
 		Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("asteroid1");
-		shared_ptr<Sprite> asteroid_sprite
-			= make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+		shared_ptr<Sprite> asteroid_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 		asteroid_sprite->SetLoopAnimation(true);
 		shared_ptr<GameObject> asteroid = make_shared<Asteroid>();
 		asteroid->SetBoundingShape(make_shared<BoundingSphere>(asteroid->GetThisPtr(), 10.0f));
@@ -221,8 +215,7 @@ void Asteroids::CreateGUI()
 	// Set the vertical alignment of the label to GUI_VALIGN_TOP
 	mScoreLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
 	// Add the GUILabel to the GUIComponent  
-	shared_ptr<GUIComponent> score_component
-		= static_pointer_cast<GUIComponent>(mScoreLabel);
+	shared_ptr<GUIComponent> score_component = static_pointer_cast<GUIComponent>(mScoreLabel);
 	mGameDisplay->GetContainer()->AddComponent(score_component, GLVector2f(0.0f, 1.0f));
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
@@ -242,8 +235,7 @@ void Asteroids::CreateGUI()
 	// Set the visibility of the label to false (hidden)
 	mGameOverLabel->SetVisible(false);
 	// Add the GUILabel to the GUIContainer
-	shared_ptr<GUIComponent> game_over_component
-		= static_pointer_cast<GUIComponent>(mGameOverLabel);
+	shared_ptr<GUIComponent> game_over_component = static_pointer_cast<GUIComponent>(mGameOverLabel);
 	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
 }
 
@@ -270,13 +262,15 @@ void Asteroids::OnPlayerKilled(int lives_left)
 	std::string lives_msg = msg_stream.str();
 	mLivesLabel->SetText(lives_msg);
 	if (lives_left > 0) { SetTimer(1000, CREATE_NEW_PLAYER); }
+	else {
+		mGameOverLabel->SetVisible(true);
+	}
 }
 
 shared_ptr<GameObject> Asteroids::CreateExplosion()
 {
 	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("explosion");
-	shared_ptr<Sprite> explosion_sprite =
-		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	shared_ptr<Sprite> explosion_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 	explosion_sprite->SetLoopAnimation(false);
 	shared_ptr<GameObject> explosion = make_shared<Explosion>();
 	explosion->SetSprite(explosion_sprite);
