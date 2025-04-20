@@ -4,6 +4,7 @@
 #include "GameUtil.h"
 #include "GameSession.h"
 #include "IKeyboardListener.h"
+#include "IMouseListener.h"
 #include "IGameWorldListener.h"
 #include "IScoreListener.h" 
 #include "ScoreKeeper.h"
@@ -14,7 +15,7 @@ class GameObject;
 class Spaceship;
 class GUILabel;
 
-class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
+class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener, public IMouseListener
 {
 public:
 	Asteroids(int argc, char *argv[]);
@@ -30,6 +31,11 @@ public:
 	void OnKeyReleased(uchar key, int x, int y);
 	void OnSpecialKeyPressed(int key, int x, int y);
 	void OnSpecialKeyReleased(int key, int x, int y);
+
+	void OnMouseDragged(int x, int y);
+	void OnMouseButton(int button, int state, int x, int y);
+	void OnMouseMoved(int x, int y);
+
 
 	// Declaration of IScoreListener interface //////////////////////////////////
 

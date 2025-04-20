@@ -11,6 +11,7 @@
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
+#include <iostream>
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -40,6 +41,8 @@ void Asteroids::Menu() {
 	// Add this as a listener to the world and the keyboard
 	mGameWindow->AddKeyboardListener(thisPtr);
 
+	mGameWindow->AddMouseListener(thisPtr);
+
 	// Add a score keeper to the game world
 	mGameWorld->AddListener(&mScoreKeeper);
 
@@ -62,6 +65,16 @@ void Asteroids::Menu() {
 
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
+
+	bool mShowMenu = true; // Enable menu rendering
+
+	// Set play button dimensions and position (centered)
+	float mPlayButtonWidth = 100.0f;
+	float mPlayButtonHeight = 50.0f;
+	float mPlayButtonX = (400 - mPlayButtonWidth) / 2.0f;
+	float mPlayButtonY = (400 - mPlayButtonHeight) / 2.0f;
+
+
 
 	// Start the game
 	GameSession::Start();
@@ -134,6 +147,19 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 	} 
 }
 
+void Asteroids::OnMouseButton(int button, int state, int x, int y) {
+	if (button == 0 && state == 0) {
+		std::cout << "Left click at (" << x << ", " << y << ")" << std::endl;
+	}
+}
+
+void Asteroids::OnMouseMoved(int x, int y) {
+
+}
+
+void Asteroids::OnMouseDragged(int x, int y) {
+
+}
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING IGameWorldListener ////////////////////
 
