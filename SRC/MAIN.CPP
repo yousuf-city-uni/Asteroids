@@ -7,8 +7,6 @@
 #include "GlutSession.h"
 #include "Asteroids.h"
 
-// Now we need to perform some Windows magic to stop an extra console
-// window from appearing, don't worry about the specifics of this.
 //#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
 // Main Function For Bringing It All Together.

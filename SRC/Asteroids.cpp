@@ -66,15 +66,23 @@ void Asteroids::Menu() {
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
-	bool mShowMenu = true; // Enable menu rendering
+	// Quit Box
+	shared_ptr<GUIContainer> quitBox = make_shared<GUIContainer>();
+	quitBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	quitBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	quitBox->SetSize(GLVector2i(0.3f, 0.15f)); // Normalized size
 
-	// Set play button dimensions and position (centered)
-	float mPlayButtonWidth = 100.0f;
-	float mPlayButtonHeight = 50.0f;
-	float mPlayButtonX = (400 - mPlayButtonWidth) / 2.0f;
-	float mPlayButtonY = (400 - mPlayButtonHeight) / 2.0f;
+	//Quit Label
+	shared_ptr<GUILabel> quitLabel = make_shared<GUILabel>("Quit");
+	quitLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	quitLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 
+	quitBox->AddComponent(static_pointer_cast<GUIComponent>(quitLabel), GLVector2f(0.15f, 0.075f));
 
+	quitLabel->SetVisible(true);
+	quitBox->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(quitBox, GLVector2f(0.1f, 0.1f));
 
 	// Start the game
 	GameSession::Start();
@@ -150,11 +158,17 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 	if (button == 0 && state == 0) {
 		std::cout << "Left click at (" << x << ", " << y << ")" << std::endl;
+
+		if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
+			std::cout << "Clicked inside the target region!" << std::endl;
+			exit(0);
+		}
+
 	}
 }
 
 void Asteroids::OnMouseMoved(int x, int y) {
-
+	std::cout << "Mouse Moved To (" << x << ", " << y << ")" << std::endl;
 }
 
 void Asteroids::OnMouseDragged(int x, int y) {
