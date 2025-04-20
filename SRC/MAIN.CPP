@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	// Create a new asteroids game
 	Asteroids asteroids(argc, argv);
 	// Start the asteroids game
-	asteroids.Start();
+	asteroids.Menu();
 
 	return 0;
 }

@@ -29,9 +29,8 @@ Asteroids::~Asteroids(void)
 
 // PUBLIC INSTANCE METHODS ////////////////////////////////////////////////////
 
-/** Start an asteroids game. */
-void Asteroids::Start()
-{
+/** asteroids menu. */
+void Asteroids::Menu() {
 	// Create a shared pointer for the Asteroids game object - DO NOT REMOVE
 	shared_ptr<Asteroids> thisPtr = shared_ptr<Asteroids>(this);
 
@@ -54,6 +53,23 @@ void Asteroids::Start()
 	glEnable(GL_LIGHT0);
 	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
+
+	// Add a player (watcher) to the game world
+	mGameWorld->AddListener(&mPlayer);
+
+	// Add this class as a listener of the player
+	mPlayer.AddListener(thisPtr);
+
+	// Create some asteroids and add them to the world
+	CreateAsteroids(10);
+
+	// Start the game
+	GameSession::Start();
+}
+
+/** Start an asteroids game. */
+void Asteroids::Start()
+{
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
 	// Create a spaceship and add it to the world
@@ -63,15 +79,6 @@ void Asteroids::Start()
 
 	//Create the GUI
 	CreateGUI();
-
-	// Add a player (watcher) to the game world
-	mGameWorld->AddListener(&mPlayer);
-
-	// Add this class as a listener of the player
-	mPlayer.AddListener(thisPtr);
-
-	// Start the game
-	GameSession::Start();
 }
 
 /** Stop the current game. */
