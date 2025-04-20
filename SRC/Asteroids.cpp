@@ -8,15 +8,17 @@
 #include "GameDisplay.h"
 #include "Spaceship.h"
 #include "BoundingShape.h"
+#include "Bullet.h"
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
 #include <iostream>
+#include <vector>
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
 /** Constructor. Takes arguments from command line, just in case. */
-Asteroids::Asteroids(int argc, char *argv[])
+Asteroids::Asteroids(int argc, char* argv[])
 	: GameSession(argc, argv)
 {
 	mLevel = 0;
@@ -66,11 +68,29 @@ void Asteroids::Menu() {
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
+	// Play Box
+	shared_ptr<GUIContainer> playBox = make_shared<GUIContainer>();
+	playBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	playBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	playBox->SetSize(GLVector2i(0.3f, 0.15f));
+
+	//Play Label
+	shared_ptr<GUILabel> playLabel = make_shared<GUILabel>("Play");
+	playLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	playLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+
+	playBox->AddComponent(static_pointer_cast<GUIComponent>(playLabel), GLVector2f(0.15f, 0.075f));
+
+	playLabel->SetVisible(true);
+	playBox->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(playBox, GLVector2f(0.1f, 0.3f));
+
 	// Quit Box
 	shared_ptr<GUIContainer> quitBox = make_shared<GUIContainer>();
 	quitBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
 	quitBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	quitBox->SetSize(GLVector2i(0.3f, 0.15f)); // Normalized size
+	quitBox->SetSize(GLVector2i(0.3f, 0.15f));
 
 	//Quit Label
 	shared_ptr<GUILabel> quitLabel = make_shared<GUILabel>("Quit");
@@ -95,7 +115,7 @@ void Asteroids::Start()
 
 	// Create a spaceship and add it to the world
 	mGameWorld->AddObject(CreateSpaceship());
-	// Create some asteroids and add them to the world
+
 	CreateAsteroids(10);
 
 	//Create the GUI
@@ -159,8 +179,12 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 	if (button == 0 && state == 0) {
 		std::cout << "Left click at (" << x << ", " << y << ")" << std::endl;
 
+		if (x >= 20 && x <= 60 && y >= 265 && y <= 280) {
+			std::cout << "Play" << std::endl;
+			RemoveAllAsteroids();
+		}
 		if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
-			std::cout << "Clicked inside the target region!" << std::endl;
+			std::cout << "Quitting!" << std::endl;
 			exit(0);
 		}
 
@@ -181,12 +205,15 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 {
 	if (object->GetType() == GameObjectType("Asteroid"))
 	{
-		shared_ptr<GameObject> explosion = CreateExplosion();
-		explosion->SetPosition(object->GetPosition());
-		explosion->SetRotation(object->GetRotation());
-		mGameWorld->AddObject(explosion);
+		if (mAsteroidCount > 0) {
+			shared_ptr<GameObject> explosion = CreateExplosion();
+			explosion->SetPosition(object->GetPosition());
+			explosion->SetRotation(object->GetRotation());
+			mGameWorld->AddObject(explosion);
 
-		mAsteroidCount--;
+			mAsteroidCount--;
+		}
+
 		if (mAsteroidCount <= 0)
 		{
 			SetTimer(500, START_NEXT_LEVEL);
@@ -250,7 +277,13 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 		asteroid->SetSprite(asteroid_sprite);
 		asteroid->SetScale(0.2f);
 		mGameWorld->AddObject(asteroid);
+		mAsteroidList.push_back(asteroid);
 	}
+}
+
+void Asteroids::RemoveAllAsteroids()
+{
+	//REMOVE ALL THE ASTEROIDS
 }
 
 void Asteroids::CreateGUI()
