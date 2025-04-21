@@ -68,41 +68,25 @@ void Asteroids::Menu() {
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
-	// Play Box
-	shared_ptr<GUIContainer> playBox = make_shared<GUIContainer>();
-	playBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	playBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	playBox->SetSize(GLVector2i(0.3f, 0.15f));
-
 	//Play Label
-	shared_ptr<GUILabel> playLabel = make_shared<GUILabel>("Play");
+	playLabel = make_shared<GUILabel>("Play");
 	playLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
 	playLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-
-	playBox->AddComponent(static_pointer_cast<GUIComponent>(playLabel), GLVector2f(0.15f, 0.075f));
+	playLabel->SetColor(GLVector3f(0.0f, 1.0f, 0.0f));
 
 	playLabel->SetVisible(true);
-	playBox->SetVisible(true);
 
-	mGameDisplay->GetContainer()->AddComponent(playBox, GLVector2f(0.1f, 0.3f));
-
-	// Quit Box
-	shared_ptr<GUIContainer> quitBox = make_shared<GUIContainer>();
-	quitBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	quitBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	quitBox->SetSize(GLVector2i(0.3f, 0.15f));
+	mGameDisplay->GetContainer()->AddComponent(playLabel, GLVector2f(0.1f, 0.3f));
 
 	//Quit Label
-	shared_ptr<GUILabel> quitLabel = make_shared<GUILabel>("Quit");
+	quitLabel = make_shared<GUILabel>("Quit");
 	quitLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
 	quitLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-
-	quitBox->AddComponent(static_pointer_cast<GUIComponent>(quitLabel), GLVector2f(0.15f, 0.075f));
+	quitLabel->SetColor(GLVector3f(1.0f, 0.0f, 0.0f));
 
 	quitLabel->SetVisible(true);
-	quitBox->SetVisible(true);
 
-	mGameDisplay->GetContainer()->AddComponent(quitBox, GLVector2f(0.1f, 0.1f));
+	mGameDisplay->GetContainer()->AddComponent(quitLabel, GLVector2f(0.1f, 0.1f));
 
 	// Start the game
 	GameSession::Start();
@@ -111,15 +95,14 @@ void Asteroids::Menu() {
 /** Start an asteroids game. */
 void Asteroids::Start()
 {
-	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
+	playLabel->SetVisible(true);
+	quitLabel->SetVisible(false);
 
-	// Create a spaceship and add it to the world
+	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 	mGameWorld->AddObject(CreateSpaceship());
 
-	CreateAsteroids(10);
-
-	//Create the GUI
 	CreateGUI();
+	//CreateAsteroids(10);
 }
 
 /** Stop the current game. */
@@ -181,7 +164,8 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 
 		if (x >= 20 && x <= 60 && y >= 265 && y <= 280) {
 			std::cout << "Play" << std::endl;
-			RemoveAllAsteroids();
+			Start();
+			//RemoveAllAsteroids();
 		}
 		if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
 			std::cout << "Quitting!" << std::endl;
@@ -277,13 +261,12 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 		asteroid->SetSprite(asteroid_sprite);
 		asteroid->SetScale(0.2f);
 		mGameWorld->AddObject(asteroid);
-		mAsteroidList.push_back(asteroid);
 	}
 }
 
 void Asteroids::RemoveAllAsteroids()
 {
-	//REMOVE ALL THE ASTEROIDS
+	
 }
 
 void Asteroids::CreateGUI()

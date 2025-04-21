@@ -62,6 +62,9 @@ private:
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
 
+	shared_ptr<GUILabel> quitLabel;
+	shared_ptr<GUILabel> playLabel;
+
 	uint mLevel;
 	uint mAsteroidCount;
 
@@ -79,7 +82,6 @@ private:
 	Player mPlayer;
 
 	std::vector<shared_ptr<GameObject>> mAsteroidList;
-	shared_ptr<Shape> mBulletShape;
 };
 
 #endif
