@@ -391,6 +391,7 @@ void Asteroids::UpdateState(GameState newState)
 		playLabel->SetVisible(false);
 		settingsLabel->SetVisible(false);
 		leaderboardLabel->SetVisible(false);
+		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
 		mScoreLabel->SetVisible(true);
 		mLivesLabel->SetVisible(true);
