@@ -56,6 +56,16 @@ public:
 	void OnTimer(int value);
 	shared_ptr<GameObject> CreateExplosion();
 
+	enum GameState {
+		MENU,
+		SETTINGS,
+		INSTRUCTIONS,
+		LEADERBOARD,
+		PLAYING,
+		GAME_OVER,
+	};
+	void UpdateState(GameState newState);
+
 private:
 	shared_ptr<Spaceship> mSpaceship;
 	shared_ptr<GUILabel> mScoreLabel;
@@ -64,6 +74,9 @@ private:
 
 	shared_ptr<GUILabel> quitLabel;
 	shared_ptr<GUILabel> playLabel;
+	shared_ptr<GUILabel> settingsLabel;
+	shared_ptr<GUILabel> instructionsLabel;
+	shared_ptr<GUILabel> leaderboardLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;
@@ -82,6 +95,8 @@ private:
 	Player mPlayer;
 
 	std::vector<shared_ptr<GameObject>> mAsteroidList;
+
+	GameState mCurrentState = MENU;
 };
 
 #endif

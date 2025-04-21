@@ -76,7 +76,37 @@ void Asteroids::Menu() {
 
 	playLabel->SetVisible(true);
 
-	mGameDisplay->GetContainer()->AddComponent(playLabel, GLVector2f(0.1f, 0.3f));
+	mGameDisplay->GetContainer()->AddComponent(playLabel, GLVector2f(0.1f, 0.5f));
+
+	//Instructions Label
+	instructionsLabel = make_shared<GUILabel>("Instructions");
+	instructionsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	instructionsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	instructionsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	instructionsLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(instructionsLabel, GLVector2f(0.18f, 0.4f));
+
+	//Settings Label
+	settingsLabel = make_shared<GUILabel>("Settings");
+	settingsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	settingsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	settingsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	settingsLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(settingsLabel, GLVector2f(0.14f, 0.3f));
+
+	//Leaderboard Label
+	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
+	leaderboardLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	leaderboardLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	leaderboardLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	leaderboardLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(leaderboardLabel, GLVector2f(0.18f, 0.2f));
 
 	//Quit Label
 	quitLabel = make_shared<GUILabel>("Quit");
@@ -95,9 +125,6 @@ void Asteroids::Menu() {
 /** Start an asteroids game. */
 void Asteroids::Start()
 {
-	playLabel->SetVisible(true);
-	quitLabel->SetVisible(false);
-
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 	mGameWorld->AddObject(CreateSpaceship());
 
@@ -162,14 +189,20 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 	if (button == 0 && state == 0) {
 		std::cout << "Left click at (" << x << ", " << y << ")" << std::endl;
 
-		if (x >= 20 && x <= 60 && y >= 265 && y <= 280) {
-			std::cout << "Play" << std::endl;
-			Start();
-			//RemoveAllAsteroids();
-		}
-		if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
-			std::cout << "Quitting!" << std::endl;
-			exit(0);
+		if (mCurrentState == MENU) {
+			if (x >= 20 && x <= 60 && y >= 265 && y <= 280) {
+				std::cout << "Play" << std::endl;
+				for (auto asteroid : mAsteroidList) {
+					mGameWorld->FlagForRemoval(asteroid->GetThisPtr());
+				}
+				mAsteroidList.clear();
+				Start();
+				UpdateState(PLAYING);
+			}
+			if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
+				std::cout << "Quitting!" << std::endl;
+				exit(0);
+			}
 		}
 
 	}
@@ -177,6 +210,8 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 
 void Asteroids::OnMouseMoved(int x, int y) {
 	std::cout << "Mouse Moved To (" << x << ", " << y << ")" << std::endl;
+	std::cout << "Leaderboard visible? " << leaderboardLabel->GetVisible() << std::endl;
+
 }
 
 void Asteroids::OnMouseDragged(int x, int y) {
@@ -260,13 +295,9 @@ void Asteroids::CreateAsteroids(const uint num_asteroids)
 		asteroid->SetBoundingShape(make_shared<BoundingSphere>(asteroid->GetThisPtr(), 10.0f));
 		asteroid->SetSprite(asteroid_sprite);
 		asteroid->SetScale(0.2f);
+		mAsteroidList.push_back(asteroid);
 		mGameWorld->AddObject(asteroid);
 	}
-}
-
-void Asteroids::RemoveAllAsteroids()
-{
-	
 }
 
 void Asteroids::CreateGUI()
@@ -341,3 +372,32 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	return explosion;
 }
 
+void Asteroids::UpdateState(GameState newState)
+{
+	mCurrentState = newState;
+
+	switch (newState) {
+	case MENU:
+		playLabel->SetVisible(true);
+		settingsLabel->SetVisible(true);
+		leaderboardLabel->SetVisible(true);
+		quitLabel->SetVisible(true);
+		mScoreLabel->SetVisible(false);
+		mLivesLabel->SetVisible(false);
+		mGameOverLabel->SetVisible(false);
+		break;
+
+	case PLAYING:
+		playLabel->SetVisible(false);
+		settingsLabel->SetVisible(false);
+		leaderboardLabel->SetVisible(false);
+		quitLabel->SetVisible(false);
+		mScoreLabel->SetVisible(true);
+		mLivesLabel->SetVisible(true);
+		break;
+
+	case GAME_OVER:
+		mGameOverLabel->SetVisible(true);
+		break;
+	}
+}
