@@ -190,7 +190,7 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 		std::cout << "Left click at (" << x << ", " << y << ")" << std::endl;
 
 		if (mCurrentState == MENU) {
-			if (x >= 20 && x <= 60 && y >= 265 && y <= 280) {
+			if (x >= 20 && x <= 60 && y >= 185 && y <= 200) {
 				std::cout << "Play" << std::endl;
 				for (auto asteroid : mAsteroidList) {
 					mGameWorld->FlagForRemoval(asteroid->GetThisPtr());
@@ -198,6 +198,15 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 				mAsteroidList.clear();
 				Start();
 				UpdateState(PLAYING);
+			}
+			if (x >= 20 && x <= 125 && y >= 225 && y <= 240) {
+				std::cout << "Instructions Clicked" << std::endl;
+			}
+			if (x >= 20 && x <= 90 && y >= 265 && y <= 280) {
+				std::cout << "Settings Clicked" << std::endl;
+			}
+			if (x >= 20 && x <= 125 && y >= 305 && y <= 320) {
+				std::cout << "Leaderboard Clicked" << std::endl;
 			}
 			if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
 				std::cout << "Quitting!" << std::endl;
@@ -210,8 +219,6 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 
 void Asteroids::OnMouseMoved(int x, int y) {
 	std::cout << "Mouse Moved To (" << x << ", " << y << ")" << std::endl;
-	std::cout << "Leaderboard visible? " << leaderboardLabel->GetVisible() << std::endl;
-
 }
 
 void Asteroids::OnMouseDragged(int x, int y) {
@@ -337,7 +344,7 @@ void Asteroids::OnScoreChanged(int score)
 {
 	// Format the score message using an string-based stream
 	std::ostringstream msg_stream;
-	msg_stream << "Score: " << score;
+	msg_stream << "Score: " << score-100;
 	// Get the score message as a string
 	std::string score_msg = msg_stream.str();
 	mScoreLabel->SetText(score_msg);
