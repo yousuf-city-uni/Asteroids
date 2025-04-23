@@ -33,7 +33,7 @@ Asteroids::~Asteroids(void)
 // PUBLIC INSTANCE METHODS ////////////////////////////////////////////////////
 
 /** asteroids menu. */
-void Asteroids::Menu() {
+void Asteroids::Load() {
 	// Create a shared pointer for the Asteroids game object - DO NOT REMOVE
 	shared_ptr<Asteroids> thisPtr = shared_ptr<Asteroids>(this);
 
@@ -67,56 +67,7 @@ void Asteroids::Menu() {
 
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
-
-	//Play Label
-	playLabel = make_shared<GUILabel>("Play");
-	playLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	playLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	playLabel->SetColor(GLVector3f(0.0f, 1.0f, 0.0f));
-
-	playLabel->SetVisible(true);
-
-	mGameDisplay->GetContainer()->AddComponent(playLabel, GLVector2f(0.1f, 0.5f));
-
-	//Instructions Label
-	instructionsLabel = make_shared<GUILabel>("Instructions");
-	instructionsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	instructionsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	instructionsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
-
-	instructionsLabel->SetVisible(true);
-
-	mGameDisplay->GetContainer()->AddComponent(instructionsLabel, GLVector2f(0.18f, 0.4f));
-
-	//Settings Label
-	settingsLabel = make_shared<GUILabel>("Settings");
-	settingsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	settingsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	settingsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
-
-	settingsLabel->SetVisible(true);
-
-	mGameDisplay->GetContainer()->AddComponent(settingsLabel, GLVector2f(0.14f, 0.3f));
-
-	//Leaderboard Label
-	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
-	leaderboardLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	leaderboardLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	leaderboardLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
-
-	leaderboardLabel->SetVisible(true);
-
-	mGameDisplay->GetContainer()->AddComponent(leaderboardLabel, GLVector2f(0.18f, 0.2f));
-
-	//Quit Label
-	quitLabel = make_shared<GUILabel>("Quit");
-	quitLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	quitLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
-	quitLabel->SetColor(GLVector3f(1.0f, 0.0f, 0.0f));
-
-	quitLabel->SetVisible(true);
-
-	mGameDisplay->GetContainer()->AddComponent(quitLabel, GLVector2f(0.1f, 0.1f));
+	CreateGUI();
 
 	// Start the game
 	GameSession::Start();
@@ -127,9 +78,6 @@ void Asteroids::Start()
 {
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 	mGameWorld->AddObject(CreateSpaceship());
-
-	CreateGUI();
-	//CreateAsteroids(10);
 }
 
 /** Stop the current game. */
@@ -201,12 +149,15 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			}
 			if (x >= 20 && x <= 125 && y >= 225 && y <= 240) {
 				std::cout << "Instructions Clicked" << std::endl;
+				UpdateState(INSTRUCTIONS);
 			}
 			if (x >= 20 && x <= 90 && y >= 265 && y <= 280) {
 				std::cout << "Settings Clicked" << std::endl;
+				UpdateState(SETTINGS);
 			}
 			if (x >= 20 && x <= 125 && y >= 305 && y <= 320) {
 				std::cout << "Leaderboard Clicked" << std::endl;
+				UpdateState(LEADERBOARD);
 			}
 			if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
 				std::cout << "Quitting!" << std::endl;
@@ -311,10 +262,61 @@ void Asteroids::CreateGUI()
 {
 	// Add a (transparent) border around the edge of the game display
 	mGameDisplay->GetContainer()->SetBorder(GLVector2i(10, 10));
+	//Play Label
+	playLabel = make_shared<GUILabel>("Play");
+	playLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	playLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	playLabel->SetColor(GLVector3f(0.0f, 1.0f, 0.0f));
+
+	playLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(playLabel, GLVector2f(0.1f, 0.5f));
+
+	//Instructions Label
+	instructionsLabel = make_shared<GUILabel>("Instructions");
+	instructionsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	instructionsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	instructionsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	instructionsLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(instructionsLabel, GLVector2f(0.18f, 0.4f));
+
+	//Settings Label
+	settingsLabel = make_shared<GUILabel>("Settings");
+	settingsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	settingsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	settingsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	settingsLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(settingsLabel, GLVector2f(0.14f, 0.3f));
+
+	//Leaderboard Label
+	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
+	leaderboardLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	leaderboardLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	leaderboardLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	leaderboardLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(leaderboardLabel, GLVector2f(0.18f, 0.2f));
+
+	//Quit Label
+	quitLabel = make_shared<GUILabel>("Quit");
+	quitLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	quitLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	quitLabel->SetColor(GLVector3f(1.0f, 0.0f, 0.0f));
+
+	quitLabel->SetVisible(true);
+
+	mGameDisplay->GetContainer()->AddComponent(quitLabel, GLVector2f(0.1f, 0.1f));
+
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mScoreLabel = make_shared<GUILabel>("Score: 0");
 	// Set the vertical alignment of the label to GUI_VALIGN_TOP
 	mScoreLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
+	mScoreLabel->SetVisible(false);
 	// Add the GUILabel to the GUIComponent  
 	shared_ptr<GUIComponent> score_component = static_pointer_cast<GUIComponent>(mScoreLabel);
 	mGameDisplay->GetContainer()->AddComponent(score_component, GLVector2f(0.0f, 1.0f));
@@ -323,7 +325,8 @@ void Asteroids::CreateGUI()
 	mLivesLabel = make_shared<GUILabel>("Lives: 3");
 	// Set the vertical alignment of the label to GUI_VALIGN_BOTTOM
 	mLivesLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
-	// Add the GUILabel to the GUIComponent  
+	// Add the GUILabel to the GUIComponent
+	mLivesLabel->SetVisible(false);
 	shared_ptr<GUIComponent> lives_component = static_pointer_cast<GUIComponent>(mLivesLabel);
 	mGameDisplay->GetContainer()->AddComponent(lives_component, GLVector2f(0.0f, 0.0f));
 
@@ -385,13 +388,14 @@ void Asteroids::UpdateState(GameState newState)
 
 	switch (newState) {
 	case MENU:
+		mScoreLabel->SetVisible(false);
+		mLivesLabel->SetVisible(false);
+		mGameOverLabel->SetVisible(false);
+
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
 		leaderboardLabel->SetVisible(true);
 		quitLabel->SetVisible(true);
-		mScoreLabel->SetVisible(false);
-		mLivesLabel->SetVisible(false);
-		mGameOverLabel->SetVisible(false);
 		break;
 
 	case PLAYING:
@@ -403,7 +407,27 @@ void Asteroids::UpdateState(GameState newState)
 		mScoreLabel->SetVisible(true);
 		mLivesLabel->SetVisible(true);
 		break;
-
+	case INSTRUCTIONS:
+		playLabel->SetVisible(false);
+		settingsLabel->SetVisible(false);
+		leaderboardLabel->SetVisible(false);
+		instructionsLabel->SetVisible(false);
+		quitLabel->SetVisible(false);
+		break;
+	case SETTINGS:
+		playLabel->SetVisible(false);
+		settingsLabel->SetVisible(false);
+		leaderboardLabel->SetVisible(false);
+		instructionsLabel->SetVisible(false);
+		quitLabel->SetVisible(false);
+		break;
+	case LEADERBOARD:
+		playLabel->SetVisible(false);
+		settingsLabel->SetVisible(false);
+		leaderboardLabel->SetVisible(false);
+		instructionsLabel->SetVisible(false);
+		quitLabel->SetVisible(false);
+		break;
 	case GAME_OVER:
 		mGameOverLabel->SetVisible(true);
 		break;

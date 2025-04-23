@@ -22,7 +22,7 @@ public:
 	Asteroids(int argc, char *argv[]);
 	virtual ~Asteroids(void);
 
-	void Menu(void);
+	void Load(void);
 	virtual void Start(void);
 	virtual void Stop(void);
 
