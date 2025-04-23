@@ -77,6 +77,7 @@ private:
 	shared_ptr<GUILabel> settingsLabel;
 	shared_ptr<GUILabel> instructionsLabel;
 	shared_ptr<GUILabel> leaderboardLabel;
+	shared_ptr<GUILabel> backLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;

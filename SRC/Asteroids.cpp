@@ -164,12 +164,29 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 				exit(0);
 			}
 		}
-
+		if (mCurrentState == INSTRUCTIONS) {
+			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
+				std::cout << "Return to Menu" << std::endl;
+				UpdateState(MENU);
+			}
+		}
+		if (mCurrentState == SETTINGS) {
+			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
+				std::cout << "Return to Menu" << std::endl;
+				UpdateState(MENU);
+			}
+		}
+		if (mCurrentState == LEADERBOARD) {
+			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
+				std::cout << "Return to Menu" << std::endl;
+				UpdateState(MENU);
+			}
+		}
 	}
 }
 
 void Asteroids::OnMouseMoved(int x, int y) {
-	std::cout << "Mouse Moved To (" << x << ", " << y << ")" << std::endl;
+	//std::cout << "Mouse Moved To (" << x << ", " << y << ")" << std::endl;
 }
 
 void Asteroids::OnMouseDragged(int x, int y) {
@@ -312,6 +329,16 @@ void Asteroids::CreateGUI()
 
 	mGameDisplay->GetContainer()->AddComponent(quitLabel, GLVector2f(0.1f, 0.1f));
 
+	//Back Label
+	backLabel = make_shared<GUILabel>("Back");
+	backLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	backLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	backLabel->SetColor(GLVector3f(1.0f, 0.0f, 1.0f));
+
+	backLabel->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(backLabel, GLVector2f(0.1f, 0.1f));
+
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mScoreLabel = make_shared<GUILabel>("Score: 0");
 	// Set the vertical alignment of the label to GUI_VALIGN_TOP
@@ -391,9 +418,11 @@ void Asteroids::UpdateState(GameState newState)
 		mScoreLabel->SetVisible(false);
 		mLivesLabel->SetVisible(false);
 		mGameOverLabel->SetVisible(false);
+		backLabel->SetVisible(false);
 
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
+		instructionsLabel->SetVisible(true);
 		leaderboardLabel->SetVisible(true);
 		quitLabel->SetVisible(true);
 		break;
@@ -404,6 +433,7 @@ void Asteroids::UpdateState(GameState newState)
 		leaderboardLabel->SetVisible(false);
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
+
 		mScoreLabel->SetVisible(true);
 		mLivesLabel->SetVisible(true);
 		break;
@@ -413,6 +443,8 @@ void Asteroids::UpdateState(GameState newState)
 		leaderboardLabel->SetVisible(false);
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
+
+		backLabel->SetVisible(true);
 		break;
 	case SETTINGS:
 		playLabel->SetVisible(false);
@@ -420,6 +452,8 @@ void Asteroids::UpdateState(GameState newState)
 		leaderboardLabel->SetVisible(false);
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
+
+		backLabel->SetVisible(true);
 		break;
 	case LEADERBOARD:
 		playLabel->SetVisible(false);
@@ -427,6 +461,8 @@ void Asteroids::UpdateState(GameState newState)
 		leaderboardLabel->SetVisible(false);
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
+
+		backLabel->SetVisible(true);
 		break;
 	case GAME_OVER:
 		mGameOverLabel->SetVisible(true);
