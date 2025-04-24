@@ -344,7 +344,7 @@ void Asteroids::CreateGUI()
 	controlsRightLabel->SetVisible(false);
 	mGameDisplay->GetContainer()->AddComponent(controlsRightLabel, GLVector2f(0.5f, 0.5f));
 
-	controlsSpaceLabel = make_shared<GUILabel>("Space Bar To Shoot!");
+	controlsSpaceLabel = make_shared<GUILabel>("Space Bar To Shoot Bullets");
 	controlsSpaceLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	controlsSpaceLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
 	controlsSpaceLabel->SetVisible(false);
@@ -480,6 +480,7 @@ void Asteroids::UpdateState(GameState newState)
 		controlsLeftLabel->SetVisible(false);
 		controlsRightLabel->SetVisible(false);
 		controlsUpLabel->SetVisible(false);
+		controlsSpaceLabel->SetVisible(false);
 		goalLabel->SetVisible(false);
 
 		playLabel->SetVisible(true);
@@ -510,6 +511,7 @@ void Asteroids::UpdateState(GameState newState)
 		controlsLeftLabel->SetVisible(true);
 		controlsRightLabel->SetVisible(true);
 		controlsUpLabel->SetVisible(true);
+		controlsSpaceLabel->SetVisible(true);
 		goalLabel->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
