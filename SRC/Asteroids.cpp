@@ -235,8 +235,8 @@ void Asteroids::OnTimer(int value)
 	if (value == START_NEXT_LEVEL)
 	{
 		mLevel++;
-		int num_asteroids = 10 + 2 * mLevel;
-		CreateAsteroids(1);
+		int num_asteroids = 10 + 2 *(mLevel - 1);
+		CreateAsteroids(num_asteroids);
 		if (mExtraLife) {
 			int randomDigit = 1 + (rand() % 4);
 			if (randomDigit == 4) {
