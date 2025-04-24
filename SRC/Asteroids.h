@@ -98,6 +98,8 @@ private:
 	std::vector<shared_ptr<GameObject>> mAsteroidList;
 
 	GameState mCurrentState = MENU;
+
+	bool mExtraLife = true;
 };
 
 #endif

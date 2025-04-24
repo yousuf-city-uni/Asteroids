@@ -59,6 +59,9 @@ void Asteroids::Load() {
 	glEnable(GL_LIGHT0);
 	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
+	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
+	// Heart from: https://deanlofiplays.itch.io/heart-life-pack-1
+	Animation* heart_anim = AnimationManager::GetInstance().CreateAnimationFromFile("heart", 16, 16, 16, 16, "heart.png");
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
@@ -77,7 +80,6 @@ void Asteroids::Load() {
 /** Start an asteroids game. */
 void Asteroids::Start()
 {
-	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 	mGameWorld->AddObject(CreateSpaceship());
 }
 
@@ -235,15 +237,17 @@ void Asteroids::OnTimer(int value)
 		mLevel++;
 		int num_asteroids = 10 + 2 * mLevel;
 		CreateAsteroids(1);
-		int randomDigit = 1 + (rand() % 4);
-		if (randomDigit == 4) {
-			shared_ptr<GameObject> NewLife = make_shared<Life>();
-			NewLife->SetBoundingShape(make_shared<BoundingSphere>(NewLife->GetThisPtr(), 4.0f));
-			Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
-			shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-			NewLife->SetSprite(spaceship_sprite);
-			NewLife->SetScale(0.05f);
-			mGameWorld->AddObject(NewLife);
+		if (mExtraLife) {
+			int randomDigit = 1 + (rand() % 4);
+			if (randomDigit == 4) {
+				shared_ptr<GameObject> NewLife = make_shared<Life>();
+				NewLife->SetBoundingShape(make_shared<BoundingSphere>(NewLife->GetThisPtr(), 4.0f));
+				Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("heart");
+				shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+				NewLife->SetSprite(spaceship_sprite);
+				NewLife->SetScale(0.5f);
+				mGameWorld->AddObject(NewLife);
+			}
 		}
 	}
 
