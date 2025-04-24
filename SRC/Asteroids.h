@@ -76,6 +76,12 @@ private:
 	shared_ptr<GUILabel> playLabel;
 	shared_ptr<GUILabel> settingsLabel;
 	shared_ptr<GUILabel> instructionsLabel;
+	shared_ptr<GUILabel> controlsLabel;
+	shared_ptr<GUILabel> controlsUpLabel;
+	shared_ptr<GUILabel> controlsLeftLabel;
+	shared_ptr<GUILabel> controlsRightLabel;
+	shared_ptr<GUILabel> controlsSpaceLabel;
+	shared_ptr<GUILabel> goalLabel;
 	shared_ptr<GUILabel> leaderboardLabel;
 	shared_ptr<GUILabel> backLabel;
 

@@ -1,4 +1,4 @@
-#include "Asteroid.h"
+﻿#include "Asteroid.h"
 #include "Asteroids.h"
 #include "Animation.h"
 #include "AnimationManager.h"
@@ -318,6 +318,44 @@ void Asteroids::CreateGUI()
 
 	mGameDisplay->GetContainer()->AddComponent(instructionsLabel, GLVector2f(0.18f, 0.4f));
 
+	// Actual instructions labels
+
+	controlsLabel = make_shared<GUILabel>("Controls:");
+	controlsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	controlsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	controlsLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(controlsLabel, GLVector2f(0.5f, 0.8f));
+
+	controlsUpLabel = make_shared<GUILabel>("Up Arrow Key To Accelerate");
+	controlsUpLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	controlsUpLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	controlsUpLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(controlsUpLabel, GLVector2f(0.5f, 0.7f));
+
+	controlsLeftLabel = make_shared<GUILabel>("Left Arrow Key To Rotate The Ship Left");
+	controlsLeftLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	controlsLeftLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	controlsLeftLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(controlsLeftLabel, GLVector2f(0.5f, 0.6f));
+
+	controlsRightLabel = make_shared<GUILabel>("Right Arrow Key To Rotate The Ship Right");
+	controlsRightLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	controlsRightLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	controlsRightLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(controlsRightLabel, GLVector2f(0.5f, 0.5f));
+
+	controlsSpaceLabel = make_shared<GUILabel>("Space Bar To Shoot!");
+	controlsSpaceLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	controlsSpaceLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	controlsSpaceLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(controlsSpaceLabel, GLVector2f(0.5f, 0.4f));
+
+	goalLabel = make_shared<GUILabel>("Shoot Asteroids To Gain Points!");
+	goalLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	goalLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	goalLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(goalLabel, GLVector2f(0.5f, 0.3f));
+
 	//Settings Label
 	settingsLabel = make_shared<GUILabel>("Settings");
 	settingsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
@@ -438,6 +476,11 @@ void Asteroids::UpdateState(GameState newState)
 		mLivesLabel->SetVisible(false);
 		mGameOverLabel->SetVisible(false);
 		backLabel->SetVisible(false);
+		controlsLabel->SetVisible(false);
+		controlsLeftLabel->SetVisible(false);
+		controlsRightLabel->SetVisible(false);
+		controlsUpLabel->SetVisible(false);
+		goalLabel->SetVisible(false);
 
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
@@ -463,6 +506,11 @@ void Asteroids::UpdateState(GameState newState)
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
 
+		controlsLabel->SetVisible(true);
+		controlsLeftLabel->SetVisible(true);
+		controlsRightLabel->SetVisible(true);
+		controlsUpLabel->SetVisible(true);
+		goalLabel->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
 	case SETTINGS:
