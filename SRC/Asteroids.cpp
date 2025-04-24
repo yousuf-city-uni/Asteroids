@@ -366,6 +366,13 @@ void Asteroids::CreateGUI()
 
 	mGameDisplay->GetContainer()->AddComponent(settingsLabel, GLVector2f(0.14f, 0.3f));
 
+	// Settings Menu Labels
+	settingsTitleLabel = make_shared<GUILabel>("Settings:");
+	settingsTitleLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	settingsTitleLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	settingsTitleLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(settingsTitleLabel, GLVector2f(0.5f, 0.8f));
+
 	//Leaderboard Label
 	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
 	leaderboardLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
@@ -476,12 +483,15 @@ void Asteroids::UpdateState(GameState newState)
 		mLivesLabel->SetVisible(false);
 		mGameOverLabel->SetVisible(false);
 		backLabel->SetVisible(false);
+
 		controlsLabel->SetVisible(false);
 		controlsLeftLabel->SetVisible(false);
 		controlsRightLabel->SetVisible(false);
 		controlsUpLabel->SetVisible(false);
 		controlsSpaceLabel->SetVisible(false);
 		goalLabel->SetVisible(false);
+
+		settingsTitleLabel->SetVisible(false);
 
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
@@ -522,6 +532,7 @@ void Asteroids::UpdateState(GameState newState)
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
 
+		settingsTitleLabel->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
 	case LEADERBOARD:
