@@ -29,5 +29,12 @@ bool Asteroid::CollisionTest(shared_ptr<GameObject> o)
 
 void Asteroid::OnCollision(const GameObjectList& objects)
 {
+	for (const auto& obj : objects)
+	{
+		if (obj->GetType() == GameObjectType("NewLife")) {
+			return;
+		}
+	}
+
 	mWorld->FlagForRemoval(GetThisPtr());
 }

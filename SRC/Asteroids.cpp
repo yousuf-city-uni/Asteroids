@@ -14,6 +14,7 @@
 #include "Explosion.h"
 #include <iostream>
 #include <vector>
+#include "Life.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -213,6 +214,10 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			SetTimer(500, START_NEXT_LEVEL);
 		}
 	}
+	if (object->GetType() == GameObjectType("NewLife")) {
+		mPlayer.AddLife();
+		mLivesLabel->SetText("Lives: " + std::to_string(mPlayer.GetLives()));
+	}
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -229,7 +234,17 @@ void Asteroids::OnTimer(int value)
 	{
 		mLevel++;
 		int num_asteroids = 10 + 2 * mLevel;
-		CreateAsteroids(num_asteroids);
+		CreateAsteroids(1);
+		int randomDigit = 1 + (rand() % 4);
+		if (randomDigit == 4) {
+			shared_ptr<GameObject> NewLife = make_shared<Life>();
+			NewLife->SetBoundingShape(make_shared<BoundingSphere>(NewLife->GetThisPtr(), 4.0f));
+			Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+			shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+			NewLife->SetSprite(spaceship_sprite);
+			NewLife->SetScale(0.05f);
+			mGameWorld->AddObject(NewLife);
+		}
 	}
 
 }

@@ -26,6 +26,14 @@ public:
 		}
 	}
 
+	void AddLife() {
+		mLives += 1;
+	}
+
+	int GetLives() {
+		return mLives;
+	}
+
 	void AddListener(shared_ptr<IPlayerListener> listener)
 	{
 		mListeners.push_back(listener);
