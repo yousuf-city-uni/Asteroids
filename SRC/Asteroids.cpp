@@ -62,6 +62,8 @@ void Asteroids::Load() {
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 	// Heart from: https://deanlofiplays.itch.io/heart-life-pack-1
 	Animation* heart_anim = AnimationManager::GetInstance().CreateAnimationFromFile("heart", 16, 16, 16, 16, "heart.png");
+	// Cog from: https://opengameart.org/content/gui-settings-cog
+	Animation* cog_anim = AnimationManager::GetInstance().CreateAnimationFromFile("cog", 64, 64, 64, 64, "cog.png");
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
