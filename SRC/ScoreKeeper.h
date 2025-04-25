@@ -11,7 +11,7 @@
 class ScoreKeeper : public IGameWorldListener
 {
 public:
-	ScoreKeeper() { mScore = 0; }
+	ScoreKeeper() { mScore = -100; }
 	virtual ~ScoreKeeper() {}
 
 	void OnWorldUpdated(GameWorld* world) {}
@@ -20,9 +20,24 @@ public:
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
 		if (object->GetType() == GameObjectType("Asteroid")) {
- 			mScore += 10;
+			//mScore += 10;
 			FireScoreChanged();
 		}
+	}
+
+	int GetScore() {
+		return mScore;
+		FireScoreChanged();
+	}
+
+	void SetScore(int a) {
+		mScore = a;
+		FireScoreChanged();
+	}
+
+	void AddScore() {
+		mScore += 10;
+		FireScoreChanged();
 	}
 
 	void AddListener(shared_ptr<IScoreListener> listener)

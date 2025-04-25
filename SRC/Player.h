@@ -34,6 +34,10 @@ public:
 		return mLives;
 	}
 
+	void SetLives(int a) {
+		mLives = a;
+	}
+
 	void AddListener(shared_ptr<IPlayerListener> listener)
 	{
 		mListeners.push_back(listener);

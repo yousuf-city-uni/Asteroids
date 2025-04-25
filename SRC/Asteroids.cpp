@@ -164,7 +164,7 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			}
 			if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
 				std::cout << "Quitting!" << std::endl;
-				exit(0);
+				Stop();
 			}
 		}
 		if (mCurrentState == INSTRUCTIONS) {
@@ -183,6 +183,15 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
+			}
+		}
+		if (mCurrentState == GAME_OVER) {
+			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
+				std::cout << "Return to Menu" << std::endl;
+				UpdateState(MENU);
+				mLevel = 0;
+				mScoreKeeper.SetScore(mAsteroidCount * -10);
+				mPlayer.SetLives(3);
 			}
 		}
 	}
@@ -209,6 +218,9 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			mGameWorld->AddObject(explosion);
 
 			mAsteroidCount--;
+			if (mCurrentState == PLAYING) {
+				mScoreKeeper.AddScore();
+			}
 		}
 
 		if (mAsteroidCount <= 0)
@@ -438,7 +450,7 @@ void Asteroids::OnScoreChanged(int score)
 {
 	// Format the score message using an string-based stream
 	std::ostringstream msg_stream;
-	msg_stream << "Score: " << score-100;
+	msg_stream << "Score: " << score;
 	// Get the score message as a string
 	std::string score_msg = msg_stream.str();
 	mScoreLabel->SetText(score_msg);
@@ -458,7 +470,7 @@ void Asteroids::OnPlayerKilled(int lives_left)
 	mLivesLabel->SetText(lives_msg);
 	if (lives_left > 0) { SetTimer(1000, CREATE_NEW_PLAYER); }
 	else {
-		mGameOverLabel->SetVisible(true);
+		UpdateState(GAME_OVER);
 	}
 }
 
@@ -546,6 +558,7 @@ void Asteroids::UpdateState(GameState newState)
 		break;
 	case GAME_OVER:
 		mGameOverLabel->SetVisible(true);
+		backLabel->SetVisible(true);
 		break;
 	}
 }
