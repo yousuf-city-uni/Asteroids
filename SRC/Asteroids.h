@@ -91,6 +91,10 @@ private:
 
 	uint mLevel;
 	uint mAsteroidCount;
+	std::vector<shared_ptr<GameObject>> mAsteroidList;
+
+	bool mExtraLife = true;
+	std::vector<shared_ptr<GameObject>> mExtraLifeList;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
@@ -105,11 +109,8 @@ private:
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
 
-	std::vector<shared_ptr<GameObject>> mAsteroidList;
-
 	GameState mCurrentState = MENU;
 
-	bool mExtraLife = true;
 };
 
 #endif

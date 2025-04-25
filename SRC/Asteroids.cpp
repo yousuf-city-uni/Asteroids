@@ -147,8 +147,8 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 					mGameWorld->FlagForRemoval(asteroid->GetThisPtr());
 				}
 				mAsteroidList.clear();
-				Start();
 				UpdateState(PLAYING);
+				Start();
 			}
 			if (x >= 20 && x <= 125 && y >= 225 && y <= 240) {
 				std::cout << "Instructions Clicked" << std::endl;
@@ -189,6 +189,10 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
+				for (auto extraLife : mExtraLifeList) {
+					mGameWorld->FlagForRemoval(extraLife->GetThisPtr());
+				}
+				mExtraLifeList.clear();
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
 				mPlayer.SetLives(3);
@@ -249,6 +253,7 @@ void Asteroids::OnTimer(int value)
 		mLevel++;
 		int num_asteroids = 10 + 2 *(mLevel - 1);
 		CreateAsteroids(num_asteroids);
+
 		if (mExtraLife) {
 			int randomDigit = 1 + (rand() % 4);
 			if (randomDigit == 4) {
@@ -258,6 +263,7 @@ void Asteroids::OnTimer(int value)
 				shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 				NewLife->SetSprite(spaceship_sprite);
 				NewLife->SetScale(0.5f);
+				mExtraLifeList.push_back(NewLife);
 				mGameWorld->AddObject(NewLife);
 			}
 		}
