@@ -119,7 +119,6 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 	case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
 
 	case GLUT_KEY_DOWN:
-		std::cout << "Down key pressed";
 		if (mBrakesEnabled) {
 			if (hasBrakes) {
 				mSpaceship->Thrust(-10);
@@ -188,6 +187,26 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			}
 		}
 		if (mCurrentState == SETTINGS) {
+			if (x >= 205 && x <= 270 && y >= 110 && y <= 125) {
+				mExtraLife = !mExtraLife;
+				if (mExtraLife) {
+					extraLifeStatusLabel->SetText("Enabled");
+				}
+				else {
+					extraLifeStatusLabel->SetText("Disabled");
+				}
+				std::cout << "Extra Lives: " << mExtraLife << std::endl;
+			}
+			if (x >= 205 && x <= 270 && y >= 150 && y <= 165) {
+				mBrakesEnabled = !mBrakesEnabled;
+				if (mBrakesEnabled) {
+					brakesStatusLabel->SetText("Enabled");
+				}
+				else {
+					brakesStatusLabel->SetText("Disabled");
+				}
+				std::cout << "Brakes: " << mExtraLife << std::endl;
+			}
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
@@ -208,6 +227,12 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 						mGameWorld->FlagForRemoval(extraLife->GetThisPtr());
 					}
 					mExtraLifeList.clear();
+				}
+				if (mBrakesEnabled) {
+					for (auto cog : mCogList) {
+						mGameWorld->FlagForRemoval(cog->GetThisPtr());
+					}
+					mCogList.clear();
 				}
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
@@ -255,6 +280,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	if (object->GetType() == GameObjectType("Cog")) {
 		std::cout << "Cog Collected" << endl;
 		hasBrakes = true;
+		mCogList.clear();
 	}
 }
 
@@ -296,6 +322,7 @@ void Asteroids::OnTimer(int value)
 				shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 				Brakes->SetSprite(spaceship_sprite);
 				Brakes->SetScale(0.1f);
+				mCogList.push_back(Brakes);
 				mGameWorld->AddObject(Brakes);
 			}
 		}
@@ -422,7 +449,35 @@ void Asteroids::CreateGUI()
 	settingsTitleLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
 	settingsTitleLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
 	settingsTitleLabel->SetVisible(false);
-	mGameDisplay->GetContainer()->AddComponent(settingsTitleLabel, GLVector2f(0.5f, 0.8f));
+	mGameDisplay->GetContainer()->AddComponent(settingsTitleLabel, GLVector2f(0.45f, 0.8f));
+
+	extraLifeLabel = make_shared<GUILabel>("Extra Lives:");
+	extraLifeLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	extraLifeLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	extraLifeLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	extraLifeLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(extraLifeLabel, GLVector2f(0.3f, 0.7f));
+
+	extraLifeStatusLabel = make_shared<GUILabel>("Enabled");
+	extraLifeStatusLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	extraLifeStatusLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	extraLifeStatusLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	extraLifeStatusLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(extraLifeStatusLabel, GLVector2f(0.6f, 0.7f));
+
+	brakesLabel = make_shared<GUILabel>("Brakes:");
+	brakesLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	brakesLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	brakesLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	brakesLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(brakesLabel, GLVector2f(0.3f, 0.6f));
+
+	brakesStatusLabel = make_shared<GUILabel>("Enabled");
+	brakesStatusLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	brakesStatusLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	brakesStatusLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	brakesStatusLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(brakesStatusLabel, GLVector2f(0.6f, 0.6f));
 
 	//Leaderboard Label
 	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
@@ -543,6 +598,10 @@ void Asteroids::UpdateState(GameState newState)
 		goalLabel->SetVisible(false);
 
 		settingsTitleLabel->SetVisible(false);
+		extraLifeLabel->SetVisible(false);
+		extraLifeStatusLabel->SetVisible(false);
+		brakesLabel->SetVisible(false);
+		brakesStatusLabel->SetVisible(false);
 
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
@@ -584,6 +643,10 @@ void Asteroids::UpdateState(GameState newState)
 		quitLabel->SetVisible(false);
 
 		settingsTitleLabel->SetVisible(true);
+		extraLifeLabel->SetVisible(true);
+		extraLifeStatusLabel->SetVisible(true);
+		brakesLabel->SetVisible(true);
+		brakesStatusLabel->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
 	case LEADERBOARD:

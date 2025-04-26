@@ -85,6 +85,11 @@ private:
 
 	shared_ptr<GUILabel> settingsLabel;
 	shared_ptr<GUILabel> settingsTitleLabel;
+	shared_ptr<GUILabel> extraLifeLabel;
+	shared_ptr<GUILabel> extraLifeStatusLabel;
+	shared_ptr<GUILabel> brakesLabel;
+	shared_ptr<GUILabel> brakesStatusLabel;
+
 
 	shared_ptr<GUILabel> leaderboardLabel;
 	shared_ptr<GUILabel> backLabel;
@@ -98,6 +103,7 @@ private:
 
 	bool mBrakesEnabled = true;
 	bool hasBrakes = false;
+	std::vector<shared_ptr<GameObject>> mCogList;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
