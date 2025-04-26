@@ -96,6 +96,9 @@ private:
 	bool mExtraLife = true;
 	std::vector<shared_ptr<GameObject>> mExtraLifeList;
 
+	bool mBrakesEnabled = true;
+	bool hasBrakes = false;
+
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
 	void CreateGUI();

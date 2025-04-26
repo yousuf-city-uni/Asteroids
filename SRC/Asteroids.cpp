@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include "Life.h"
+#include "Cog.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -82,6 +83,8 @@ void Asteroids::Load() {
 /** Start an asteroids game. */
 void Asteroids::Start()
 {
+	mLevel = 0;
+	hasBrakes = false;
 	mGameWorld->AddObject(CreateSpaceship());
 }
 
@@ -114,6 +117,15 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 	{
 	// If up arrow key is pressed start applying forward thrust
 	case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
+
+	case GLUT_KEY_DOWN:
+		std::cout << "Down key pressed";
+		if (mBrakesEnabled) {
+			if (hasBrakes) {
+				mSpaceship->Thrust(-10);
+			}
+		}
+		break;
 	// If left arrow key is pressed start rotating anti-clockwise
 	case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
 	// If right arrow key is pressed start rotating clockwise
@@ -238,6 +250,10 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		mPlayer.AddLife();
 		mLivesLabel->SetText("Lives: " + std::to_string(mPlayer.GetLives()));
 	}
+	if (object->GetType() == GameObjectType("Cog")) {
+		std::cout << "Cog Collected" << endl;
+		hasBrakes = true;
+	}
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -262,13 +278,26 @@ void Asteroids::OnTimer(int value)
 				shared_ptr<GameObject> NewLife = make_shared<Life>();
 				NewLife->SetBoundingShape(make_shared<BoundingSphere>(NewLife->GetThisPtr(), 4.0f));
 				Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("heart");
-				shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-				NewLife->SetSprite(spaceship_sprite);
+				shared_ptr<Sprite> heart_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+				NewLife->SetSprite(heart_sprite);
 				NewLife->SetScale(0.5f);
 				mExtraLifeList.push_back(NewLife);
 				mGameWorld->AddObject(NewLife);
 			}
 		}
+
+		if (mBrakesEnabled) {
+			if (mLevel == 3) {
+				shared_ptr<GameObject> Brakes = make_shared<Cog>();
+				Brakes->SetBoundingShape(make_shared<BoundingSphere>(Brakes->GetThisPtr(), 4.0f));
+				Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("cog");
+				shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+				Brakes->SetSprite(spaceship_sprite);
+				Brakes->SetScale(0.1f);
+				mGameWorld->AddObject(Brakes);
+			}
+		}
+
 	}
 
 }
