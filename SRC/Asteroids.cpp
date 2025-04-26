@@ -203,10 +203,12 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
-				for (auto extraLife : mExtraLifeList) {
-					mGameWorld->FlagForRemoval(extraLife->GetThisPtr());
+				if (mExtraLife) {
+					for (auto extraLife : mExtraLifeList) {
+						mGameWorld->FlagForRemoval(extraLife->GetThisPtr());
+					}
+					mExtraLifeList.clear();
 				}
-				mExtraLifeList.clear();
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
 				mPlayer.SetLives(3);
