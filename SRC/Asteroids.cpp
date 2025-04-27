@@ -488,14 +488,17 @@ void Asteroids::OnTimer(int value)
 		}
 
 		if (mShieldEnabled) {
-			shared_ptr<GameObject> NewShield = make_shared<Shield>();
-			NewShield->SetBoundingShape(make_shared<BoundingSphere>(NewShield->GetThisPtr(), 4.0f));
-			Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shield");
-			shared_ptr<Sprite> shield_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-			NewShield->SetSprite(shield_sprite);
-			NewShield->SetScale(0.15f);
-			mExtraLifeList.push_back(NewShield);
-			mGameWorld->AddObject(NewShield);
+			int randomDigit = rand() % 2;
+			if (randomDigit == 1) {
+				shared_ptr<GameObject> NewShield = make_shared<Shield>();
+				NewShield->SetBoundingShape(make_shared<BoundingSphere>(NewShield->GetThisPtr(), 4.0f));
+				Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shield");
+				shared_ptr<Sprite> shield_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+				NewShield->SetSprite(shield_sprite);
+				NewShield->SetScale(0.15f);
+				mExtraLifeList.push_back(NewShield);
+				mGameWorld->AddObject(NewShield);
+			}
 		}
 
 	}
