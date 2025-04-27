@@ -16,6 +16,13 @@
 #include <vector>
 #include "Life.h"
 #include "Cog.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <sstream>
+#include <limits>
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -99,13 +106,31 @@ void Asteroids::Stop()
 
 void Asteroids::OnKeyPressed(uchar key, int x, int y)
 {
-	switch (key)
+	if (mCurrentState == PLAYING) {
+		switch (key)
+		{
+		case ' ':
+			mSpaceship->Shoot();
+			break;
+		default:
+			break;
+		}
+	}
+	if (isNameFocused)
 	{
-	case ' ':
-		mSpaceship->Shoot();
-		break;
-	default:
-		break;
+		if (key == 8)
+		{
+			if (!name.empty())
+			{
+				name.pop_back();
+				nameBox->SetText(name);
+			}
+		}
+		else if (key >= 32 && key <= 126)
+		{
+			name += key;
+			nameBox->SetText(name);
+		}
 	}
 }
 
@@ -173,6 +198,58 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			}
 			if (x >= 20 && x <= 125 && y >= 305 && y <= 320) {
 				std::cout << "Leaderboard Clicked" << std::endl;
+				std::ifstream file("Scores.csv");
+
+				std::vector<std::pair<std::string, int>> scores;
+				std::string line;
+
+				while (std::getline(file, line)) {
+					std::stringstream ss(line);
+					std::string name;
+					std::string scoreStr;
+
+					if (std::getline(ss, name, ',') && std::getline(ss, scoreStr)) {
+						try {
+							int score = std::stoi(scoreStr);
+							scores.push_back({ name, score });
+						}
+						catch (const std::invalid_argument& e) {
+							std::cerr << "Warning: Invalid score for " << name << ".\n";
+						}
+					}
+					else {
+						std::cerr << "Warning: Unexpected Error Reading Score\n";
+					}
+				}
+
+				file.close();
+
+				std::sort(scores.begin(), scores.end(), [](const auto& a, const auto& b) {
+					return a.second > b.second;
+					});
+
+				int count = std::min(5, static_cast<int>(scores.size()));
+				std::cout << "Top " << count << " scores:\n";
+				for (int i = 0; i < count; ++i) {
+					switch (i) {
+					case 0:
+						firstPlace->SetText("1) " + scores[i].first + ": " + std::to_string(scores[i].second));
+						break;
+					case 1:
+						secondPlace->SetText("2) " + scores[i].first + ": " + std::to_string(scores[i].second));
+						break;
+					case 2:
+						thirdPlace->SetText("3) " + scores[i].first + ": " + std::to_string(scores[i].second));
+						break;
+					case 3:
+						fourthPlace->SetText("4) " + scores[i].first + ": " + std::to_string(scores[i].second));
+						break;
+					case 4:
+						fifthPlace->SetText("5) " + scores[i].first + ": " + std::to_string(scores[i].second));
+						break;
+					}
+					std::cout << scores[i].first << ": " << scores[i].second << "\n";
+				}
 				UpdateState(LEADERBOARD);
 			}
 			if (x >= 20 && x <= 60 && y >= 345 && y <= 360) {
@@ -219,6 +296,43 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 			}
 		}
 		if (mCurrentState == GAME_OVER) {
+			if (x >= 155 && x <= 245 && y >= 185 && y <= 200) {
+				isNameFocused = true;
+			}
+			else {
+				isNameFocused = false;
+			}
+			if (x >= 145 && x <= 255 && y >= 260 && y <= 275) {
+				std::ofstream outfile;
+				outfile.open("Scores.csv", std::ios_base::app);
+
+				if (!outfile.is_open()) {
+					std::cerr << "Error opening Scores.csv" << std::endl;
+				}
+				outfile << name << "," << mScoreKeeper.GetScore() <<"\n";
+				outfile.close();
+
+				std::cout << "Score Uploaded" << std::endl;
+				name = "";
+				nameBox->SetText("Enter Name");
+				UpdateState(MENU);
+				if (mExtraLife) {
+					for (auto extraLife : mExtraLifeList) {
+						mGameWorld->FlagForRemoval(extraLife->GetThisPtr());
+					}
+					mExtraLifeList.clear();
+				}
+				if (mBrakesEnabled) {
+					for (auto cog : mCogList) {
+						mGameWorld->FlagForRemoval(cog->GetThisPtr());
+					}
+					mCogList.clear();
+				}
+				mLevel = 0;
+				mScoreKeeper.SetScore(mAsteroidCount * -10);
+				mPlayer.SetLives(3);
+				mLivesLabel->SetText("Lives: 3");
+			}
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
@@ -237,6 +351,7 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
 				mPlayer.SetLives(3);
+				mLivesLabel->SetText("Lives: 3");
 			}
 		}
 	}
@@ -489,6 +604,97 @@ void Asteroids::CreateGUI()
 
 	mGameDisplay->GetContainer()->AddComponent(leaderboardLabel, GLVector2f(0.18f, 0.2f));
 
+	nameBox = make_shared<GUILabel>("Enter Name");
+	nameBox->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	nameBox->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	nameBox->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	nameBox->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(nameBox, GLVector2f(0.5f, 0.5f));
+
+	nameBoxT = make_shared<GUILabel>("-------------------");
+	nameBoxT->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	nameBoxT->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	nameBoxT->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	nameBoxT->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(nameBoxT, GLVector2f(0.5f, 0.55f));
+
+	nameBoxB = make_shared<GUILabel>("-------------------");
+	nameBoxB->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	nameBoxB->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	nameBoxB->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	nameBoxB->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(nameBoxB, GLVector2f(0.5f, 0.45f));
+
+	nameBoxR = make_shared<GUILabel>("|");
+	nameBoxR->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	nameBoxR->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	nameBoxR->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	nameBoxR->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(nameBoxR, GLVector2f(0.7f, 0.5f));
+
+	nameBoxL = make_shared<GUILabel>("|");
+	nameBoxL->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	nameBoxL->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	nameBoxL->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	nameBoxL->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(nameBoxL, GLVector2f(0.3f, 0.5f));
+
+	uploadScore = make_shared<GUILabel>("Upload Score");
+	uploadScore->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	uploadScore->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	uploadScore->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+
+	uploadScore->SetVisible(false);
+
+	mGameDisplay->GetContainer()->AddComponent(uploadScore, GLVector2f(0.5f, 0.3f));
+
+	//Leaderboard Screen Labels
+	leaderboardTitleLabel = make_shared<GUILabel>("Top 5:");
+	leaderboardTitleLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	leaderboardTitleLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	leaderboardTitleLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(leaderboardTitleLabel, GLVector2f(0.45f, 0.8f));
+
+	firstPlace = make_shared<GUILabel>("1)");
+	firstPlace->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	firstPlace->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	firstPlace->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(firstPlace, GLVector2f(0.45f, 0.7f));
+
+	secondPlace = make_shared<GUILabel>("2)");
+	secondPlace->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	secondPlace->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	secondPlace->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(secondPlace, GLVector2f(0.45f, 0.6f));
+
+	thirdPlace = make_shared<GUILabel>("3)");
+	thirdPlace->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	thirdPlace->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	thirdPlace->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(thirdPlace, GLVector2f(0.45f, 0.5f));
+
+	fourthPlace = make_shared<GUILabel>("4)");
+	fourthPlace->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	fourthPlace->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	fourthPlace->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(fourthPlace, GLVector2f(0.45f, 0.4f));
+
+	fifthPlace = make_shared<GUILabel>("5)");
+	fifthPlace->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	fifthPlace->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	fifthPlace->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(fifthPlace, GLVector2f(0.45f, 0.3f));
+
 	//Quit Label
 	quitLabel = make_shared<GUILabel>("Quit");
 	quitLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
@@ -537,7 +743,7 @@ void Asteroids::CreateGUI()
 	mGameOverLabel->SetVisible(false);
 	// Add the GUILabel to the GUIContainer
 	shared_ptr<GUIComponent> game_over_component = static_pointer_cast<GUIComponent>(mGameOverLabel);
-	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.5f));
+	mGameDisplay->GetContainer()->AddComponent(game_over_component, GLVector2f(0.5f, 0.8f));
 }
 
 void Asteroids::OnScoreChanged(int score)
@@ -603,6 +809,20 @@ void Asteroids::UpdateState(GameState newState)
 		brakesLabel->SetVisible(false);
 		brakesStatusLabel->SetVisible(false);
 
+		leaderboardTitleLabel->SetVisible(false);
+		firstPlace->SetVisible(false);
+		secondPlace->SetVisible(false);
+		thirdPlace->SetVisible(false);
+		fourthPlace->SetVisible(false);
+		fifthPlace->SetVisible(false);
+
+		nameBox->SetVisible(false);
+		nameBoxT->SetVisible(false);
+		nameBoxB->SetVisible(false);
+		nameBoxR->SetVisible(false);
+		nameBoxL->SetVisible(false);
+		uploadScore->SetVisible(false);
+
 		playLabel->SetVisible(true);
 		settingsLabel->SetVisible(true);
 		instructionsLabel->SetVisible(true);
@@ -656,10 +876,24 @@ void Asteroids::UpdateState(GameState newState)
 		instructionsLabel->SetVisible(false);
 		quitLabel->SetVisible(false);
 
+		leaderboardTitleLabel->SetVisible(true);
+		firstPlace->SetVisible(true);
+		secondPlace->SetVisible(true);
+		thirdPlace->SetVisible(true);
+		fourthPlace->SetVisible(true);
+		fifthPlace->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
 	case GAME_OVER:
+
 		mGameOverLabel->SetVisible(true);
+		nameBox->SetVisible(true);
+		nameBoxT->SetVisible(true);
+		nameBoxB->SetVisible(true);
+		nameBoxR->SetVisible(true);
+		nameBoxL->SetVisible(true);
+		uploadScore->SetVisible(true);
+
 		backLabel->SetVisible(true);
 		break;
 	}

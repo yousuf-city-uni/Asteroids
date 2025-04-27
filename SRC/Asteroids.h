@@ -90,9 +90,24 @@ private:
 	shared_ptr<GUILabel> brakesLabel;
 	shared_ptr<GUILabel> brakesStatusLabel;
 
-
 	shared_ptr<GUILabel> leaderboardLabel;
+	shared_ptr<GUILabel> leaderboardTitleLabel;
+	shared_ptr<GUILabel> firstPlace;
+	shared_ptr<GUILabel> secondPlace;
+	shared_ptr<GUILabel> thirdPlace;
+	shared_ptr<GUILabel> fourthPlace;
+	shared_ptr<GUILabel> fifthPlace;
 	shared_ptr<GUILabel> backLabel;
+
+	shared_ptr<GUILabel> nameBox;
+	shared_ptr<GUILabel> nameBoxT;
+	shared_ptr<GUILabel> nameBoxB;
+	shared_ptr<GUILabel> nameBoxL;
+	shared_ptr<GUILabel> nameBoxR;
+	shared_ptr<GUILabel> uploadScore;
+
+	bool isNameFocused = false;
+	string name = "";
 
 	uint mLevel;
 	uint mAsteroidCount;

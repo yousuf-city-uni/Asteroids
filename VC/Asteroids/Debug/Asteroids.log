@@ -1,8 +1,6 @@
 ﻿cl : command line  warning D9035: option 'Gm' has been deprecated and will be removed in a future release
   Asteroids.cpp
-  Generating Code...
-  Skipping... (no relevant changes detected)
-  main.cpp
+D:\Projects\C++\Asteroids\src\Asteroids.cpp(216,43): warning C4101: 'e': unreferenced local variable
   Asteroids.vcxproj -> D:\Projects\C++\Asteroids\bin\Asteroids.exe
   ..\..\assets\asteroid.shape
   ..\..\assets\asteroid1_fs.png
@@ -11,7 +9,8 @@
   ..\..\assets\explosion_fs.png
   ..\..\assets\heart.png
   ..\..\assets\hearts_fs.png
+  ..\..\assets\Scores.csv
   ..\..\assets\spaceship.shape
   ..\..\assets\spaceship_fs.png
   ..\..\assets\thruster.shape
-         10 file(s) copied.
+         11 file(s) copied.
