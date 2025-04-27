@@ -27,8 +27,12 @@ public:
 	bool CollisionTest(shared_ptr<GameObject> o);
 	void OnCollision(const GameObjectList &objects);
 
+	void SetCanCollide(bool a);
+
 private:
 	float mThrust;
+
+	bool mCanCollide = true;
 
 	shared_ptr<Shape> mSpaceshipShape;
 	shared_ptr<Shape> mThrusterShape;

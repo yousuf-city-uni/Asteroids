@@ -34,6 +34,9 @@ void Asteroid::OnCollision(const GameObjectList& objects)
 		if (obj->GetType() == GameObjectType("NewLife")) {
 			return;
 		}
+		if (obj->GetType() == GameObjectType("Shield")) {
+			return;
+		}
 	}
 
 	mWorld->FlagForRemoval(GetThisPtr());

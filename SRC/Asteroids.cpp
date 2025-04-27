@@ -16,6 +16,7 @@
 #include <vector>
 #include "Life.h"
 #include "Cog.h"
+#include "Shield.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -23,6 +24,7 @@
 #include <algorithm>
 #include <sstream>
 #include <limits>
+#include <thread>
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -72,7 +74,10 @@ void Asteroids::Load() {
 	Animation* heart_anim = AnimationManager::GetInstance().CreateAnimationFromFile("heart", 16, 16, 16, 16, "heart.png");
 	// Cog from: https://opengameart.org/content/gui-settings-cog
 	Animation* cog_anim = AnimationManager::GetInstance().CreateAnimationFromFile("cog", 64, 64, 64, 64, "cog.png");
-
+	// Shield from: https://bounti-ebooks.itch.io/shield-icons
+	Animation* shield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("shield", 64, 64, 64, 64, "shield.png");
+	// Forcefield from: https://opengameart.org/content/shield-effect
+	Animation* forcefield_anim = AnimationManager::GetInstance().CreateAnimationFromFile("forcefield", 128, 128, 128, 128, "forcefield.png");
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
 
@@ -284,6 +289,16 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 				}
 				std::cout << "Brakes: " << mExtraLife << std::endl;
 			}
+			if (x >= 205 && x <= 270 && y >= 185 && y <= 200) {
+				mShieldEnabled = !mShieldEnabled;
+				if (mShieldEnabled) {
+					shieldsStatusLabel->SetText("Enabled");
+				}
+				else {
+					shieldsStatusLabel->SetText("Disabled");
+				}
+				std::cout << "Shield: " << mExtraLife << std::endl;
+			}
 			if (x >= 20 && x <= 65 && y >= 345 && y <= 360) {
 				std::cout << "Return to Menu" << std::endl;
 				UpdateState(MENU);
@@ -328,6 +343,12 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 					}
 					mCogList.clear();
 				}
+				if (mShieldEnabled) {
+					for (auto shield : mShieldList) {
+						mGameWorld->FlagForRemoval(shield->GetThisPtr());
+					}
+				}
+				mShieldList.clear();
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
 				mPlayer.SetLives(3);
@@ -348,6 +369,12 @@ void Asteroids::OnMouseButton(int button, int state, int x, int y) {
 					}
 					mCogList.clear();
 				}
+				if (mShieldEnabled) {
+					for (auto shield : mShieldList) {
+						mGameWorld->FlagForRemoval(shield->GetThisPtr());
+					}
+				}
+				mShieldList.clear();
 				mLevel = 0;
 				mScoreKeeper.SetScore(mAsteroidCount * -10);
 				mPlayer.SetLives(3);
@@ -397,6 +424,24 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		hasBrakes = true;
 		mCogList.clear();
 	}
+	if (object->GetType() == GameObjectType("Shield")) {
+		std::cout << "Shield Collected" << endl;
+		hasShield = true;
+		mSpaceship->SetCanCollide(false);
+		Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("forcefield");
+		shared_ptr<Sprite> forcefield_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+		mSpaceship->SetSprite(forcefield_sprite);
+		std::thread([this]() {
+			std::this_thread::sleep_for(std::chrono::seconds(5));
+			hasShield = false;
+			Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("spaceship");
+			shared_ptr<Sprite> spaceship_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+			mSpaceship->SetSprite(spaceship_sprite);
+			mSpaceship->SetCanCollide(true);
+			mShieldList.clear();
+			}).detach();
+	}
+
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -440,6 +485,17 @@ void Asteroids::OnTimer(int value)
 				mCogList.push_back(Brakes);
 				mGameWorld->AddObject(Brakes);
 			}
+		}
+
+		if (mShieldEnabled) {
+			shared_ptr<GameObject> NewShield = make_shared<Shield>();
+			NewShield->SetBoundingShape(make_shared<BoundingSphere>(NewShield->GetThisPtr(), 4.0f));
+			Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("shield");
+			shared_ptr<Sprite> shield_sprite = make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+			NewShield->SetSprite(shield_sprite);
+			NewShield->SetScale(0.15f);
+			mExtraLifeList.push_back(NewShield);
+			mGameWorld->AddObject(NewShield);
 		}
 
 	}
@@ -593,6 +649,21 @@ void Asteroids::CreateGUI()
 	brakesStatusLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
 	brakesStatusLabel->SetVisible(false);
 	mGameDisplay->GetContainer()->AddComponent(brakesStatusLabel, GLVector2f(0.6f, 0.6f));
+
+	shieldsLabel = make_shared<GUILabel>("Invulnerability:");
+	shieldsLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	shieldsLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	shieldsLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	shieldsLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(shieldsLabel, GLVector2f(0.3f, 0.5f));
+
+	shieldsStatusLabel = make_shared<GUILabel>("Enabled");
+	shieldsStatusLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_BOTTOM);
+	shieldsStatusLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	shieldsStatusLabel->SetColor(GLVector3f(1.0f, 1.0f, 1.0f));
+	shieldsStatusLabel->SetVisible(false);
+	mGameDisplay->GetContainer()->AddComponent(shieldsStatusLabel, GLVector2f(0.6f, 0.5f));
+
 
 	//Leaderboard Label
 	leaderboardLabel = make_shared<GUILabel>("Leaderboard");
@@ -808,6 +879,8 @@ void Asteroids::UpdateState(GameState newState)
 		extraLifeStatusLabel->SetVisible(false);
 		brakesLabel->SetVisible(false);
 		brakesStatusLabel->SetVisible(false);
+		shieldsLabel->SetVisible(false);
+		shieldsStatusLabel->SetVisible(false);
 
 		leaderboardTitleLabel->SetVisible(false);
 		firstPlace->SetVisible(false);
@@ -867,6 +940,8 @@ void Asteroids::UpdateState(GameState newState)
 		extraLifeStatusLabel->SetVisible(true);
 		brakesLabel->SetVisible(true);
 		brakesStatusLabel->SetVisible(true);
+		shieldsLabel->SetVisible(true);
+		shieldsStatusLabel->SetVisible(true);
 		backLabel->SetVisible(true);
 		break;
 	case LEADERBOARD:

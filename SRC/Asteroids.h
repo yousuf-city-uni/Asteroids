@@ -89,6 +89,8 @@ private:
 	shared_ptr<GUILabel> extraLifeStatusLabel;
 	shared_ptr<GUILabel> brakesLabel;
 	shared_ptr<GUILabel> brakesStatusLabel;
+	shared_ptr<GUILabel> shieldsLabel;
+	shared_ptr<GUILabel> shieldsStatusLabel;
 
 	shared_ptr<GUILabel> leaderboardLabel;
 	shared_ptr<GUILabel> leaderboardTitleLabel;
@@ -119,6 +121,11 @@ private:
 	bool mBrakesEnabled = true;
 	bool hasBrakes = false;
 	std::vector<shared_ptr<GameObject>> mCogList;
+
+	bool mShieldEnabled = true;
+	bool hasShield = false;
+	void deactivateShield(bool hasShield);
+	std::vector<shared_ptr<GameObject>> mShieldList;
 
 	void ResetSpaceship();
 	shared_ptr<GameObject> CreateSpaceship();
