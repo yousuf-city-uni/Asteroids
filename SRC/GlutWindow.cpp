@@ -113,6 +113,7 @@ void  GlutWindow::OnWindowReshaped(int w, int h)
 	for (WindowListenerList::iterator it = mWindowListeners.begin(); it != mWindowListeners.end(); ++it) {
 		(*it)->OnWindowReshaped(w, h);
 	}
+	glutReshapeWindow(400, 400);
 }
    
 void GlutWindow::OnWindowVisible(int visible)
@@ -130,19 +131,19 @@ int GlutWindow::GetWindowID(void)
 
 void GlutWindow::SetFullscreen(bool fs)
 {
-	if (fs == mFullscreen) return;					// Return if no change required
+	//if (fs == mFullscreen) return;					// Return if no change required
 	
-	mFullscreen = fs;								// Set new window mode
-	if (mFullscreen) {								// If change to fullscreen required
-		mWidth = glutGet(GLUT_WINDOW_WIDTH);		// Save current window width
-		mHeight = glutGet(GLUT_WINDOW_HEIGHT);		// Save current window height
-		mXCoord = glutGet(GLUT_WINDOW_X);			// Save current window x-coord
-		mYCoord = glutGet(GLUT_WINDOW_Y);			// Save current window y-coord
-		glutFullScreen();							// Switch to fullscreen mode
-	} else {										// If change to windowed required
-		glutReshapeWindow(mWidth, mHeight);			// Restore window size
-		glutPositionWindow(mXCoord, mYCoord);			// Restore window position
-	}
+	//mFullscreen = fs;								// Set new window mode
+	//if (mFullscreen) {								// If change to fullscreen required
+		//mWidth = glutGet(GLUT_WINDOW_WIDTH);		// Save current window width
+		//mHeight = glutGet(GLUT_WINDOW_HEIGHT);		// Save current window height
+		//mXCoord = glutGet(GLUT_WINDOW_X);			// Save current window x-coord
+		//mYCoord = glutGet(GLUT_WINDOW_Y);			// Save current window y-coord
+		//glutFullScreen();							// Switch to fullscreen mode
+	//} else {										// If change to windowed required
+		//glutReshapeWindow(mWidth, mHeight);			// Restore window size
+		//glutPositionWindow(mXCoord, mYCoord);			// Restore window position
+	//}
 }
 
 void SetTimer(uint msecs, int value)

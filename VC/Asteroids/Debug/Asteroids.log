@@ -1,7 +1,4 @@
-﻿cl : command line  warning D9035: option 'Gm' has been deprecated and will be removed in a future release
-  Asteroids.cpp
-D:\Projects\C++\Asteroids\src\Asteroids.cpp(221,43): warning C4101: 'e': unreferenced local variable
-  Asteroids.vcxproj -> D:\Projects\C++\Asteroids\bin\Asteroids.exe
+﻿  Asteroids.vcxproj -> D:\Projects\C++\Asteroids\bin\Asteroids.exe
   ..\..\assets\asteroid.shape
   ..\..\assets\asteroid1_fs.png
   ..\..\assets\bullet.shape
